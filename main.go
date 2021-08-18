@@ -18,4 +18,11 @@ func main() {
 		fmt.Printf("Error: input file - No file found: %s", inputFile)
 		os.Exit(2)
 	}
+
+	outputFile := os.Args[2]
+	_, err = os.OpenFile(outputFile, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0666)
+	if err != nil {
+		fmt.Printf("Error: output file - File already exists: %s", outputFile)
+		os.Exit(3)
+	}
 }
