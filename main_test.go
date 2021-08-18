@@ -19,8 +19,9 @@ func TestEndToEndSuite(t *testing.T) {
 
 func (s *EndToEndSuite) TestNoArguments() {
  	cmd := exec.Command("./sam")
- 	out, _ := cmd.CombinedOutput()
+ 	out, err := cmd.CombinedOutput()
 
+	s.Error(err)
  	s.Contains(string(out), "requires input and output file locations")
 }
 
