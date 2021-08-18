@@ -25,6 +25,16 @@ func (s *EndToEndSuite) TestNoArguments() {
  	s.Contains(string(out), "requires input and output file locations")
 }
 
+func (s *EndToEndSuite) TestInputFileDoesNotExist() {
+	inputFile := "inputs/3.json"
+	cmd := exec.Command("./sam", inputFile, "./reports")
+	out, err := cmd.CombinedOutput()
+
+	s.Error(err)
+	s.Contains(string(out), "No file found: " + inputFile)
+
+}
+
 func (s *EndToEndSuite) TestInputOne() {
 	s.T().Skip("Handling some errors first")
 	inputFile := "./inputs/1.json"
