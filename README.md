@@ -12,8 +12,9 @@ make build
 
 ### Run
 
-The script (`./sam`) requires you to provide to arugments to run an input file location and an output file location
-
+The script (`./sam`) requires you to provide to arguments to run an input file location and an output file location
+The file at the input file location must exist.
+The location for the output file location cannot already exist.
 ```
 ./sam ./inputs/1.json ./report
 ```
