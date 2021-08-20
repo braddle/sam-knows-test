@@ -25,4 +25,5 @@ func main() {
 		fmt.Printf("Error: output file - File already exists: %s", outputFile)
 		os.Exit(3)
 	}
+
 }

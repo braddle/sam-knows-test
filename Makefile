@@ -2,5 +2,5 @@ test: build
 	go test -v ./...
 
 build:
-	go build -o sam ./...
+	go build -o ./sam .
 
