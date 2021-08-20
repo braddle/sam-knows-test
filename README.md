@@ -19,6 +19,10 @@ The location for the output file location cannot already exist.
 ./sam ./inputs/1.json ./report
 ```
 
+## Assumptions
+
+  - That the report will only need to be rendered in Megabits per Second
+
 ## TODO
 
 ## Requirements
