@@ -95,20 +95,5 @@ func (s *MeasureSuite) TestGetMedianInMBPSEvenNumberOfMetrics() {
 	s.Equal(float64(10), m.GetMedianInBytes())
 }
 
-func (s *MeasureSuite) TestJsonTimeUnmarshalValidFormat() {
-	exp := time.Date(2020, 06, 05, 0, 0, 0, 0, time.UTC)
 
-	jt := data.JsonTime{}
-	err := jt.UnmarshalJSON([]byte(`"2020-06-05"`))
-
-	s.NoError(err)
-	s.Equal(exp, jt.Time)
-}
-
-func (s *MeasureSuite) TestJsonTimeUnmarshalInalidFormat() {
-	jt := data.JsonTime{}
-	err := jt.UnmarshalJSON([]byte(`"20-13-05"`))
-
-	s.Error(err)
-}
 
