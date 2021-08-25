@@ -22,9 +22,9 @@ The location for the output file location cannot already exist.
 ## Assumptions
 
   - That the report will only need to be rendered in Megabits per Second
-
-## TODO
-
+  - That the will only been a single period of under performance per data set
+  - That under performance is defined as a when the metricValue is less that the average metricValue minus half the minimum metricValue 
+  
 ## Requirements
 
 

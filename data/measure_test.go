@@ -95,5 +95,71 @@ func (s *MeasureSuite) TestGetMedianInMBPSEvenNumberOfMetrics() {
 	s.Equal(float64(10), m.GetMedianInBytes())
 }
 
+func (s *MeasureSuite) TestWithoutUnderPerformance() {
+	m := data.Measurements{
+		M: []data.Measure{
+			{
+				Time:   data.JsonTime{time.Date(2020, 06, 01, 12, 0, 0, 0, time.UTC)},
+				Metric: 10.5,
+			},
+			{
+				Time: data.JsonTime{time.Date(2020, 06, 02, 12, 0,0,0, time.UTC)},
+				Metric: 10.5,
+			},
+			{
+				Time:   data.JsonTime{time.Date(2020, 06, 03, 12, 0,0,0, time.UTC)},
+				Metric: 10.5,
+			},
+			{
+				Time:   data.JsonTime{time.Date(2020, 06, 04, 12, 0, 0, 0, time.UTC)},
+				Metric: 10.5,
+			},
+			{
+				Time:   data.JsonTime{time.Date(2020, 06, 05, 12, 0, 0, 0, time.UTC)},
+				Metric: 10.5,
+			},
+		},
+	}
+
+	s.False(m.HasUnderPerformance())
+}
+
+func (s *MeasureSuite) TestWithUnderPerformance() {
+	start := time.Date(2020, 06, 03, 12, 0, 0, 0, time.UTC)
+	end := time.Date(2020, 06, 04, 12, 0, 0, 0, time.UTC)
+	m := data.Measurements{
+		M: []data.Measure{
+			{
+				Time:   data.JsonTime{time.Date(2020, 06, 01, 12, 0, 0, 0, time.UTC)},
+				Metric: 10.5,
+			},
+			{
+				Time: data.JsonTime{time.Date(2020, 06, 02, 12, 0,0,0, time.UTC)},
+				Metric: 10.5,
+			},
+			{
+				Time:   data.JsonTime{start},
+				Metric: 1.5,
+			},
+			{
+				Time:   data.JsonTime{end},
+				Metric: 1.5,
+			},
+			{
+				Time:   data.JsonTime{time.Date(2020, 06, 05, 12, 0, 0, 0, time.UTC)},
+				Metric: 10.5,
+			},
+			{
+				Time:   data.JsonTime{time.Date(2020, 06, 06, 12, 0, 0, 0, time.UTC)},
+				Metric: 6.2,
+			},
+		},
+	}
+
+	s.True(m.HasUnderPerformance())
+	s.Equal(start, m.GetUnderPerformanceStartDate())
+	s.Equal(end, m.GetUnderPerformanceEndDate())
+}
+
 
 

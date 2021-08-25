@@ -95,6 +95,53 @@ func (m Measurements) GetMedianInBytes() float64 {
 	return median
 }
 
+func (m Measurements) HasUnderPerformance() bool {
+	underPerformanceLimit := m.getUnderPerformanceLimit()
+
+	for _, d := range m.M {
+		if d.Metric < underPerformanceLimit {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (m Measurements) GetUnderPerformanceStartDate() time.Time {
+	var s time.Time
+	var nilTime time.Time
+	underPerformanceLimit := m.getUnderPerformanceLimit()
+
+	for _, d := range m.M {
+		if d.Metric < underPerformanceLimit && (s == nilTime || d.Time.Before(s)) {
+			s = d.Time.Time
+		}
+	}
+
+	return s
+}
+
+func (m Measurements) GetUnderPerformanceEndDate() time.Time {
+	var e time.Time
+	var nilTime time.Time
+	underPerformanceLimit := m.getUnderPerformanceLimit()
+
+	for _, d := range m.M {
+		if d.Metric < underPerformanceLimit && (e == nilTime || d.Time.After(e)) {
+			e = d.Time.Time
+		}
+	}
+
+	return e
+}
+
+func (m Measurements) getUnderPerformanceLimit() float64 {
+	avg := m.GetAverageInBytes()
+	min := m.GetMedianInBytes()
+
+	return avg - (min / 2)
+}
+
 type Measure struct {
 	Time   JsonTime `json:"dtime"`
 	Metric float64  `json:"metricValue"`
