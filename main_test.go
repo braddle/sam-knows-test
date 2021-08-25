@@ -44,13 +44,15 @@ func (s *EndToEndSuite) TestOutputFileDoesExist() {
 }
 
 func (s *EndToEndSuite) TestInputOne() {
-	s.T().Skip("Working on parts that will make this test pass.")
-	inputFile := "./inputs/1.json"
-	outputFile := "./reports/1.output"
+	//s.T().Skip("Working on parts that will make this test pass.")
+	inputFile := "inputs/1.json"
+	outputFile := "reports/1.output"
+	os.Remove(outputFile)
 	cmd := exec.Command("./sam", inputFile, outputFile)
- 	err := cmd.Run()
+	out, err := cmd.CombinedOutput()
 
  	s.NoError(err)
+	s.Empty(out)
  	s.FileExists(outputFile)
 
  	expectedFile, _ := os.Open("./outputs/1.output")

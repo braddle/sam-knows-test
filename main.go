@@ -1,7 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/braddle/sam-knows-test/data"
+	"github.com/braddle/sam-knows-test/report"
+	"io/ioutil"
 	"os"
 )
 
@@ -13,17 +17,27 @@ func main() {
 	}
 
 	inputFile := os.Args[1]
-	_, err := os.Open(inputFile)
+	in, err := os.Open(inputFile)
 	if err != nil {
 		fmt.Printf("Error: input file - No file found: %s", inputFile)
 		os.Exit(2)
 	}
 
+
+	c := make([]data.Measure,0)
+	b, _ := ioutil.ReadAll(in)
+	err = json.Unmarshal(b, &c)
+	//err = json.NewDecoder(in).Decode(&c)
+	m := data.Measurements{c}
+	s := report.Render(m)
+
 	outputFile := os.Args[2]
-	_, err = os.OpenFile(outputFile, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0666)
+	out, err := os.OpenFile(outputFile, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0666)
 	if err != nil {
 		fmt.Printf("Error: output file - File already exists: %s", outputFile)
 		os.Exit(3)
 	}
 
+	out.Write([]byte(s))
+	out.Close()
 }

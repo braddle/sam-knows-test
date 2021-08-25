@@ -16,8 +16,8 @@ func TestMeasureSuite(t *testing.T) {
 }
 
 var m data.Measurements
-var startDate = time.Date(2020, 06, 01, 12, 0, 0, 0, time.UTC)
-var endDate = time.Date(2020, 06, 04, 12, 0, 0, 0, time.UTC)
+var startDate = data.JsonTime{time.Date(2020, 06, 01, 12, 0, 0, 0, time.UTC)}
+var endDate = data.JsonTime{time.Date(2020, 06, 04, 12, 0, 0, 0, time.UTC)}
 
 func (s *MeasureSuite) SetupTest() {
 	m = data.Measurements{
@@ -27,11 +27,11 @@ func (s *MeasureSuite) SetupTest() {
 				Metric: 10.5,
 			},
 			{
-				Time: time.Date(2020, 06, 02, 12, 0,0,0, time.UTC),
+				Time: data.JsonTime{time.Date(2020, 06, 02, 12, 0,0,0, time.UTC)},
 				Metric: 9.5,
 			},
 			{
-				Time: time.Date(2020, 06, 03, 12, 0,0,0, time.UTC),
+				Time: data.JsonTime{time.Date(2020, 06, 03, 12, 0,0,0, time.UTC)},
 				Metric: 8.2,
 			},
 			{
@@ -43,56 +43,72 @@ func (s *MeasureSuite) SetupTest() {
 }
 
 func (s *MeasureSuite) TestGetStartDate() {
- 	s.Equal(startDate, m.GetStartDate())
+ 	s.Equal(startDate.Time, m.GetStartDate())
 }
 
 func (s *MeasureSuite) TestGetEndDate() {
-	s.Equal(endDate, m.GetEndDate())
+	s.Equal(endDate.Time, m.GetEndDate())
 }
 
 func (s *MeasureSuite) TestGetMinimumInMBPS() {
-	s.Equal(8.2, m.GetMinimumInMBPS())
+	s.Equal(8.2, m.GetMinimumInBytes())
 }
 
 func (s *MeasureSuite) TestGetMaximumInMBPS() {
-	s.Equal(11.99, m.GetMaximumInMBPS())
+	s.Equal(11.99, m.GetMaximumInBytes())
 }
 
 func (s *MeasureSuite) TestGetAverageInMBPS() {
-	s.Equal(float64(10.0475), m.GetAverageInMBPS())
+	s.Equal(float64(10.0475), m.GetAverageInBytes())
 }
 
 func (s *MeasureSuite) TestGetMedianInMBPSOddNumberOfMetrics() {
 	m := data.Measurements{
 		M: []data.Measure{
 			{
-				Time:   time.Date(2020, 06, 01, 12, 0, 0, 0, time.UTC),
+				Time:   data.JsonTime{time.Date(2020, 06, 01, 12, 0, 0, 0, time.UTC)},
 				Metric: 10.5,
 			},
 			{
-				Time: time.Date(2020, 06, 02, 12, 0,0,0, time.UTC),
+				Time: data.JsonTime{time.Date(2020, 06, 02, 12, 0,0,0, time.UTC)},
 				Metric: 9.5,
 			},
 			{
-				Time:   time.Date(2020, 06, 03, 12, 0,0,0, time.UTC),
+				Time:   data.JsonTime{time.Date(2020, 06, 03, 12, 0,0,0, time.UTC)},
 				Metric: 8.2,
 			},
 			{
-				Time:   time.Date(2020, 06, 04, 12, 0, 0, 0, time.UTC),
+				Time:   data.JsonTime{time.Date(2020, 06, 04, 12, 0, 0, 0, time.UTC)},
 				Metric: 11.99,
 			},
 			{
-				Time:   time.Date(2020, 06, 05, 12, 0, 0, 0, time.UTC),
+				Time:   data.JsonTime{time.Date(2020, 06, 05, 12, 0, 0, 0, time.UTC)},
 				Metric: 9.2,
 			},
 		},
 	}
 
-	s.Equal(float64(9.5), m.GetMedianInMBPS())
+	s.Equal(float64(9.5), m.GetMedianInBytes())
 }
 
 func (s *MeasureSuite) TestGetMedianInMBPSEvenNumberOfMetrics() {
+	s.Equal(float64(10), m.GetMedianInBytes())
+}
 
-	s.Equal(float64(10), m.GetMedianInMBPS())
+func (s *MeasureSuite) TestJsonTimeUnmarshalValidFormat() {
+	exp := time.Date(2020, 06, 05, 0, 0, 0, 0, time.UTC)
+
+	jt := data.JsonTime{}
+	err := jt.UnmarshalJSON([]byte(`"2020-06-05"`))
+
+	s.NoError(err)
+	s.Equal(exp, jt.Time)
+}
+
+func (s *MeasureSuite) TestJsonTimeUnmarshalInalidFormat() {
+	jt := data.JsonTime{}
+	err := jt.UnmarshalJSON([]byte(`"20-13-05"`))
+
+	s.Error(err)
 }
 

@@ -16,7 +16,7 @@ func (m Measurements) GetStartDate() time.Time {
 
 	for _, d := range m.M {
 		if s == nilTime || d.Time.Before(s) {
-			s = d.Time
+			s = d.Time.Time
 		}
 	}
 
@@ -29,14 +29,14 @@ func (m Measurements) GetEndDate() time.Time {
 
 	for _, d := range m.M {
 		if e == nilTime || d.Time.After(e) {
-			e = d.Time
+			e = d.Time.Time
 		}
 	}
 
 	return e
 }
 
-func (m Measurements) GetMinimumInMBPS() float64 {
+func (m Measurements) GetMinimumInBytes() float64 {
 	var f float64
 
 	for _, d := range m.M {
@@ -48,7 +48,7 @@ func (m Measurements) GetMinimumInMBPS() float64 {
 	return f
 }
 
-func (m Measurements) GetMaximumInMBPS() float64 {
+func (m Measurements) GetMaximumInBytes() float64 {
 	var f float64
 
 	for _, d := range m.M {
@@ -60,7 +60,7 @@ func (m Measurements) GetMaximumInMBPS() float64 {
 	return f
 }
 
-func (m Measurements) GetAverageInMBPS() float64 {
+func (m Measurements) GetAverageInBytes() float64 {
 	var a float64
 
 	for _, d := range m.M {
@@ -70,7 +70,7 @@ func (m Measurements) GetAverageInMBPS() float64 {
 	return a / float64(len(m.M))
 }
 
-func (m Measurements) GetMedianInMBPS() interface{} {
+func (m Measurements) GetMedianInBytes() float64 {
 	v := []float64{}
 
 	for _, d := range m.M {
@@ -84,7 +84,7 @@ func (m Measurements) GetMedianInMBPS() interface{} {
 
 	if len%2 == 0 {
 		upper := v[mid]
-		lower := v[mid - 1]
+		lower := v[mid-1]
 
 		diff := upper - lower
 		median = lower + (diff / 2)
@@ -96,6 +96,20 @@ func (m Measurements) GetMedianInMBPS() interface{} {
 }
 
 type Measure struct {
-	Time   time.Time
-	Metric float64
+	Time   JsonTime `json:"dtime"`
+	Metric float64  `json:"metricValue"`
+}
+
+type JsonTime struct {
+	time.Time
+}
+
+func (jt *JsonTime) UnmarshalJSON(b []byte) error {
+	t, err := time.Parse(`"2006-01-02"`, string(b))
+	if err != nil {
+		return err
+	}
+
+	jt.Time = t
+	return nil
 }
