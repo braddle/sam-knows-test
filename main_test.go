@@ -83,3 +83,11 @@ func (s *EndToEndSuite) TestInputTwo() {
 	s.Equal(string(expected), string(actual))
 }
 
+func (s *EndToEndSuite) TestInvalidInputFile() {
+	cmd := exec.Command("./sam", "inputs/bad.json", "reports/bad.out")
+	out, err := cmd.CombinedOutput()
+
+	s.Error(err)
+	s.Contains(string(out), "Invalid file contents")
+}
+

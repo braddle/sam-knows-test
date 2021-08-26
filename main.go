@@ -27,7 +27,10 @@ func main() {
 	c := make([]data.Measure,0)
 	b, _ := ioutil.ReadAll(in)
 	err = json.Unmarshal(b, &c)
-	//err = json.NewDecoder(in).Decode(&c)
+	if err != nil {
+		fmt.Println("Error: Invalid file contents")
+		os.Exit(3)
+	}
 	m := data.Measurements{c}
 	s := report.Render(m)
 
