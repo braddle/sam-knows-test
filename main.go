@@ -29,9 +29,13 @@ func main() {
 	err = json.Unmarshal(b, &c)
 	if err != nil {
 		fmt.Println("Error: Invalid file contents")
-		os.Exit(3)
+		os.Exit(4)
 	}
-	m := data.Measurements{c}
+	if len(c) == 0 {
+		fmt.Println("Error: Could not find any data")
+		os.Exit(4)
+	}
+		m := data.Measurements{c}
 	s := report.Render(m)
 
 	outputFile := os.Args[2]

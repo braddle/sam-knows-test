@@ -91,3 +91,10 @@ func (s *EndToEndSuite) TestInvalidInputFile() {
 	s.Contains(string(out), "Invalid file contents")
 }
 
+func (s *EndToEndSuite) TestEmptyInputFile() {
+	cmd := exec.Command("./sam", "inputs/empty.json", "reports/empty.out")
+	out, err := cmd.CombinedOutput()
+
+	s.Error(err)
+	s.Contains(string(out), "Could not find any data")
+}
