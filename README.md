@@ -2,6 +2,15 @@
 
 ## Documentation
 
+### Testing
+
+To run the tests use the test make command.
+The make command first build the application so that end to end test can be run along with Unit tests.
+
+```
+make test
+```
+
 ### Build
 
 To build the script use the build make command
